@@ -33,7 +33,7 @@ def resource_update(context, data_dict):
     .. seealso https://github.com/ckan/ckan/blob/master/ckan/logic/action/update.py
   '''
   log.debug('Updating Resource')
-  if not tk.asbool(config.get('ckan.cloud_storage_enable')) or data_dict.get('url').startswith( 'http://' ):
+  if not tk.asbool(config.get('ckan.cloud_storage_enable')) or data_dict.get('upload') == '':
     log.debug('Plugin Not Enabled or External Link')
     return origin.resource_update(context, data_dict)
 

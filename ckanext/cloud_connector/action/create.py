@@ -22,7 +22,7 @@ def resource_create(context, data_dict):
     .. sealso https://github.com/ckan/ckan/blob/master/ckan/logic/action/create.py
   '''
   log.debug('Creating Resource')
-  if not tk.asbool(config.get('ckan.cloud_storage_enable')) or data_dict.get('url').startswith( 'http://' ):
+  if not tk.asbool(config.get('ckan.cloud_storage_enable')) or data_dict.get('upload') == '':
     log.debug('Plugin Not Enabled or External Link')
     return origin.resource_create(context, data_dict)
 
@@ -36,7 +36,7 @@ def resource_create(context, data_dict):
 
   _check_access('resource_create', context, data_dict)
 
-  if not 'resources' in pkg_dict:
+  if 'resources' not in pkg_dict:
     pkg_dict['resources'] = []
 
   upload = uploader.S3Upload(data_dict)
