@@ -8,12 +8,17 @@ import ckan.model as model
 import logging
 log = logging.getLogger(__name__)
 
+from ckanext.cloud_connector.s3.uploader import s3_option_items
+
 class S3Plugin(plugins.SingletonPlugin):
   plugins.implements(plugins.IActions)
   plugins.implements(plugins.IRoutes, inherit=True)
-  plugins.implements(plugins.IConfigurer)
+
+  #See Notes on README.md
+  #plugins.implements(plugins.IConfigurer)
 
   def get_actions(self):
+    log.debug('Setting up actions')
     return {
       'resource_create': action.resource_create,
       'resource_update': action.resource_update,
@@ -22,6 +27,15 @@ class S3Plugin(plugins.SingletonPlugin):
   def update_config(self, config):
     toolkit.add_template_directory(config, 'templates')
     toolkit.add_resource('fanstatic', 'cloud_connector')
+
+  # http://docs.ckan.org/en/latest/extensions/remote-config-update.html
+  def update_config_schema(self, schema):
+
+    ignore_missing = toolkit.get_validator('ignore_missing')
+    is_positive_integer = toolkit.get_validator('is_positive_integer')
+
+    schema.update(s3_option_items)
+    return schema
 
   def before_map(self, map):
     map.connect(
@@ -33,6 +47,3 @@ class S3Plugin(plugins.SingletonPlugin):
       controller='ckanext.cloud_connector.s3.controller:S3Controller',
       action='reset_config')
     return map
-
-
-

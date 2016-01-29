@@ -18,9 +18,14 @@ log = logging.getLogger(__name__)
 __all__ = ['resource_create']
 
 def resource_create(context, data_dict):
-  if not tk.asbool(config.get('ckan.cloud_storage_enable')) or data_dict.get('url'):
+  '''
+    .. sealso https://github.com/ckan/ckan/blob/master/ckan/logic/action/create.py
+  '''
+  log.debug('Creating Resource')
+  if not tk.asbool(config.get('ckan.cloud_storage_enable')) or data_dict.get('url').startswith( 'http://' ):
+    log.debug('Plugin Not Enabled or External Link')
     return origin.resource_create(context, data_dict)
-  
+
   model = context['model']
   user = context['user']
 

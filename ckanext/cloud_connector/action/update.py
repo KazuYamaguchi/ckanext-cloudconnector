@@ -20,7 +20,21 @@ __all__ = ['resource_update']
 
 
 def resource_update(context, data_dict):
-  if not tk.asbool(config.get('ckan.cloud_storage_enable')) or data_dict.get('url'):
+  '''Update a resource.
+    To update a resource you must be authorized to update the dataset that the
+    resource belongs to.
+    For further parameters see
+    :py:func:`~ckan.logic.action.create.resource_create`.
+    :param id: the id of the resource to update
+    :type id: string
+    :returns: the updated resource
+    :rtype: string
+
+    .. seealso https://github.com/ckan/ckan/blob/master/ckan/logic/action/update.py
+  '''
+  log.debug('Updating Resource')
+  if not tk.asbool(config.get('ckan.cloud_storage_enable')) or data_dict.get('url').startswith( 'http://' ):
+    log.debug('Plugin Not Enabled or External Link')
     return origin.resource_update(context, data_dict)
 
   model = context['model']
@@ -37,7 +51,7 @@ def resource_update(context, data_dict):
   _check_access('resource_update', context, data_dict)
   del context["resource"]
 
-  package_id = resource.resource_group.package.id
+  package_id = resource.package.id
   pkg_dict = _get_action('package_show')(context, {'id': package_id})
 
   for n, p in enumerate(pkg_dict['resources']):
@@ -60,6 +74,7 @@ def resource_update(context, data_dict):
     errors = e.error_dict['resources'][n]
     raise ValidationError(errors)
 
+  #TODO Delete previous file (?)
   s3_link = upload.upload(id, uploader.get_max_resource_size())
   if s3_link:
     pkg_dict['resources'][n]['url_type'] = ''

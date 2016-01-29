@@ -57,3 +57,19 @@ This material is copyright &copy; 2015 Link Web Services Pty Ltd
 It is open and licensed under the GNU Affero General Public License (AGPL) v3.0 whose full text may be found at:
 
 [http://www.fsf.org/licensing/licenses/agpl-3.0.html](http://www.fsf.org/licensing/licenses/agpl-3.0.html)
+
+
+## Notes
+
+Probably it is a bad idea to publish aws key and secret_key as runtime editable options
+> Only configuration options which are not critical, sensitive or could cause the CKAN instance to break should be made runtime-editable.
+([Making configuration options runtime-editable](http://docs.ckan.org/en/latest/extensions/remote-config-update.html) )
+
+Config options are available via rest api
+[ckan.logic.action.get.config_option_show](http://docs.ckan.org/en/latest/api/index.html#ckan.logic.action.get.config_option_show)  
+> Show the current value of a particular configuration option.
+
+This fork disables the runtime editable option.
+
+### Other Relevant Information:
+* [Editing Bucket Permissions](http://docs.aws.amazon.com/AmazonS3/latest/UG/EditingBucketPermissions.html) 

@@ -18,10 +18,9 @@ from ckan.lib.uploader import (
 )
 from ckan.lib.base import abort
 
-import ckan.lib.app_globals as app_globals
-
-auto_update = app_globals.auto_update
-config_details = app_globals.config_details
+#import ckan.lib.app_globals as app_globals
+#auto_update = app_globals.auto_update
+#config_details = app_globals.config_details
 
 
 s3_option_items = {
@@ -30,10 +29,11 @@ s3_option_items = {
   'ckan.s3_secret_key':{'default':''},
   'ckan.cloud_failover':{'default':'1'},
 }
-auto_update.extend(s3_option_items.keys())
-config_details.update(s3_option_items)
+#auto_update.extend(s3_option_items.keys())
+#config_details.update(s3_option_items)
 
 class S3Upload(ResourceUpload):
+
   def __init__(self, resource):
     uploaded_file = resource.get('upload')
     if uploaded_file != None:
@@ -41,7 +41,7 @@ class S3Upload(ResourceUpload):
     else:
       self.content_type = None
     super(S3Upload, self).__init__(resource)
-   
+
     self.failover = config.get('ckan.cloud_failover')
 
     AWS_KEY = config.get('ckan.s3_aws_key')
@@ -54,6 +54,7 @@ class S3Upload(ResourceUpload):
     bucket = _s3_conn.lookup(self.bucket_name)
     if not bucket:
       try:
+        log.debug('Creating Bucket')
         bucket = _s3_conn.create_bucket(self.bucket_name)
       except Exception, e:
         log.warn(e)
@@ -62,6 +63,8 @@ class S3Upload(ResourceUpload):
           return
         elif self.failover == '2':
           raise e
+    else:
+        log.debug('Bucket Found')
 
     self.bucket = bucket
 
@@ -72,7 +75,6 @@ class S3Upload(ResourceUpload):
       elif self.failover == '2':
         abort('404', 'Problem with cloud')
     directory = 'resource'
-
     try:
       bucket_key = Key(self.bucket)
 
@@ -88,7 +90,7 @@ class S3Upload(ResourceUpload):
       return self.bucket_name + '/' + filepath
     except Exception, e:
       log.warn(e)
-      
+
 
   def _clean_whole_bucket(self):
     if self.s3_conn or self.bucket:

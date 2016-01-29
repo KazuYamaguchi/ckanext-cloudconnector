@@ -27,7 +27,7 @@ class S3Controller(base.BaseController):
       # update config from form
       for item in s3_option_items:
         if item in data:
-          app_globals.set_global(item, data[item])
+          app_globals.set_app_global(item, data[item])
       app_globals.reset()
       h.redirect_to(controller='ckanext.cloud_connector.s3.controller:S3Controller', action='config')
 
@@ -49,6 +49,6 @@ class S3Controller(base.BaseController):
         app_globals.delete_global(item)
       # reset to values in config
       app_globals.reset()
-    
+
 
     h.redirect_to(controller='ckanext.cloud_connector.s3.controller:S3Controller', action='config')
