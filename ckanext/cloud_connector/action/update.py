@@ -42,6 +42,7 @@ def resource_update(context, data_dict):
   id = _get_or_bust(data_dict, "id")
 
   resource = model.Resource.get(id)
+  previous_s3_object_url =   resource.url
   context["resource"] = resource
 
   if not resource:
@@ -61,6 +62,7 @@ def resource_update(context, data_dict):
     log.error('Could not find resource ' + id)
     raise NotFound(_('Resource was not found.'))
 
+
   upload = uploader.S3Upload(data_dict)
 
   pkg_dict['resources'][n] = data_dict
@@ -74,7 +76,10 @@ def resource_update(context, data_dict):
     errors = e.error_dict['resources'][n]
     raise ValidationError(errors)
 
-  #TODO Delete previous file (?)
+  #Delete previous file (?)
+  #log.debug(previous_s3_object_url)
+  upload.delete(previous_s3_object_url)
+
   s3_link = upload.upload(id, uploader.get_max_resource_size())
   if s3_link:
     pkg_dict['resources'][n]['url_type'] = ''

@@ -3,6 +3,7 @@ from pylons import config
 import ckan.logic.action.create as origin
 import ckanext.cloud_connector.s3.uploader as uploader
 import ckan.plugins.toolkit as tk
+import ckan.plugins as plugins
 
 from ckan.logic import (
   NotFound,
@@ -67,6 +68,9 @@ def resource_create(context, data_dict):
   ##  Run package show again to get out actual last_resource
   pkg_dict = _get_action('package_show')(context, {'id': package_id})
   resource = pkg_dict['resources'][-1]
+
+  for plugin in plugins.PluginImplementations(plugins.IResourceController):
+     plugin.after_create(context, resource)
 
   return resource
 

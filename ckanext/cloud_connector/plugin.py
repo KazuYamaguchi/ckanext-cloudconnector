@@ -24,10 +24,12 @@ class S3Plugin(plugins.SingletonPlugin):
       'resource_update': action.resource_update,
     }
 
+  '''
   def update_config(self, config):
     toolkit.add_template_directory(config, 'templates')
     toolkit.add_resource('fanstatic', 'cloud_connector')
-
+  '''
+  '''
   # http://docs.ckan.org/en/latest/extensions/remote-config-update.html
   def update_config_schema(self, schema):
 
@@ -36,6 +38,7 @@ class S3Plugin(plugins.SingletonPlugin):
 
     schema.update(s3_option_items)
     return schema
+  '''
 
   def before_map(self, map):
     map.connect(

@@ -92,6 +92,27 @@ class S3Upload(ResourceUpload):
       log.warn(e)
 
 
+  def delete(self, s3_previous_object_url):
+      if not self.s3_conn or not self.bucket:
+        if self.failover == '1':
+          return super(S3Upload, self).upload(id,max_size)
+        elif self.failover == '2':
+          abort('404', 'Problem with cloud')
+      directory = 'resource'
+      try:
+        bucket_key = Key(self.bucket)
+        file_key = s3_previous_object_url[s3_previous_object_url.find(directory):]
+        log.debug( s3_previous_object_url)
+        log.debug( file_key )
+        if file_key:
+            log.debug("Deleting object" )
+            self.bucket.delete_key(file_key)
+            log.debug("Object Deleted" )
+      except Exception, e:
+        log.warn(e)
+
+
+
   def _clean_whole_bucket(self):
     if self.s3_conn or self.bucket:
       for key in self.bucket.list():
