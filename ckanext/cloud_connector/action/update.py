@@ -66,7 +66,6 @@ def resource_update(context, data_dict):
   upload = uploader.S3Upload(data_dict)
 
   pkg_dict['resources'][n] = data_dict
-
   try:
     context['defer_commit'] = True
     context['use_cache'] = False
