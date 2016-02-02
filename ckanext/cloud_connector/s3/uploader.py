@@ -50,7 +50,8 @@ class S3Upload(ResourceUpload):
     self.s3_conn = _s3_conn
     if not _s3_conn:
       return
-    self.bucket_name = config.get('ckan.site_id', 'ckan_site_id') + bucket_postfix
+    #self.bucket_name = config.get('ckan.site_id', 'ckan_site_id') + bucket_postfix
+    self.bucket_name = config.get('ckan.s3_bucket_name')
     bucket = _s3_conn.lookup(self.bucket_name)
     if not bucket:
       try:
@@ -68,17 +69,17 @@ class S3Upload(ResourceUpload):
 
     self.bucket = bucket
 
+
   def upload(self, id, max_size=10):
     if not self.s3_conn or not self.bucket:
       if self.failover == '1':
         return super(S3Upload, self).upload(id,max_size)
       elif self.failover == '2':
         abort('404', 'Problem with cloud')
-    directory = 'resource'
     try:
       bucket_key = Key(self.bucket)
-
       if self.filename:
+        directory = 'resource'
         filepath = '/'.join((directory, id, self.filename))
         bucket_key.key = filepath
         if self.content_type:
@@ -98,9 +99,9 @@ class S3Upload(ResourceUpload):
           return super(S3Upload, self).upload(id,max_size)
         elif self.failover == '2':
           abort('404', 'Problem with cloud')
-      directory = 'resource'
       try:
         bucket_key = Key(self.bucket)
+        directory = 'resource'
         file_key = s3_previous_object_url[s3_previous_object_url.find(directory):]
         log.debug( s3_previous_object_url)
         log.debug( file_key )

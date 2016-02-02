@@ -33,10 +33,12 @@ To install CKAN CloudConnector:
 ## Config Settings
 This extension defines additional settings in config file
 
-     ckan.cloud_storage_enable=true|false    //is connector enabled or not?
-     ckan.s3_aws_key=AWS_S3_KEY              //customer key of your AWS instance
-     ckan.s3_secret_key=AWS_S3_SECRET        //secret key of your AWS instance
+     ckan.cloud_storage_enable=true|false     //is connector enabled or not?
+     ckan.s3_aws_key=AWS_S3_KEY               //customer key of your AWS instance
+     ckan.s3_secret_key=AWS_S3_SECRET         //secret key of your AWS instance
+     ckan.s3_bucket_name=YOUR_BUCKET_NAME     //Name of bucket on S3
      ckan.cloud_failover=1|2                  //1 - save file locally in case of fail, 2 - raise exception
+
 
 This configs aren't required and can be setted or changed under the 'Cloud connector' tab in admin settings section
 
