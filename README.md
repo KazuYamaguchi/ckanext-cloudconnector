@@ -1,10 +1,10 @@
 # CKAN CloudConnector
 
-A package of extensions for [CKAN open data platform](http://ckan.org/) for storing resources on CloudStorage.
+A fork / merge of https://github.com/DataShades/ckanext-cloudconnector and  https://github.com/okfn/ckanext-s3filestore
 
 ## Requirements
 
-This extension was developed and tested under CKAN-2.2
+This extension was developed and tested under CKAN-2.5
 
 For now extension supports only Amazon S3 Cloud storage. In order to use this extension you should have AWS account because AWS Key and AWS Secret Key are required for connection to Cloud.
 
@@ -33,14 +33,13 @@ To install CKAN CloudConnector:
 ## Config Settings
 This extension defines additional settings in config file
 
-     ckan.cloud_storage_enable=true|false     //is connector enabled or not?
-     ckan.s3_aws_key=AWS_S3_KEY               //customer key of your AWS instance
-     ckan.s3_secret_key=AWS_S3_SECRET         //secret key of your AWS instance
-     ckan.s3_bucket_name=YOUR_BUCKET_NAME     //Name of bucket on S3
-     ckan.cloud_failover=1|2                  //1 - save file locally in case of fail, 2 - raise exception
+     ckanext.cloud_storage.enable=true|false                  //is connector enabled or not?
+     ckanext.cloud_storage.s3.aws_key=AWS_S3_KEY              //customer key of your AWS instance
+     ckanext.cloud_storage.s3.secret_key=AWS_S3_SECRET        //secret key of your AWS instance
+     ckanext.cloud_storage.s3.bucket=YOUR_BUCKET_NAME         //Name of bucket on S3
+     ckanext.cloud_storage.path=ckan                          // local path on bucket
 
 
-This configs aren't required and can be setted or changed under the 'Cloud connector' tab in admin settings section
 
 ## Development Installation
 
@@ -63,7 +62,7 @@ It is open and licensed under the GNU Affero General Public License (AGPL) v3.0 
 
 ## Notes
 
-The Web administration was removed from this fork. Probably it is a bad idea to publish aws key and secret_key as runtime editable options
+The original Web administration from https://github.com/DataShades/ckanext-cloudconnector was removed from this fork. Probably it is a bad idea to publish aws key and secret_key as runtime editable options
 > Only configuration options which are not critical, sensitive or could cause the CKAN instance to break should be made runtime-editable.
 ([Making configuration options runtime-editable](http://docs.ckan.org/en/latest/extensions/remote-config-update.html) )
 
