@@ -111,6 +111,7 @@ class S3Uploader(BaseS3Uploader):
         self.filepath = None
 
         self.old_filename = old_filename
+        #log.debug("old_filename : "+self.old_filename)
         if old_filename:
             self.old_filepath = os.path.join(self.storage_path, old_filename)
 
@@ -241,5 +242,18 @@ class S3ResourceUploader(BaseS3Uploader):
         if self.clear:
             filepath = self.get_path(id, self.old_filename)
             self.clear_key(filepath)
-        
+
         return  remote_filepath
+
+    def delete(self, filepath):
+        '''Deletes the contents of the key at `filepath` on `self.bucket`.'''
+        k = boto.s3.key.Key(self.bucket)
+        try:
+            file_key = filepath[filepath.find(self.storage_path):]
+            log.debug(file_key)
+            k.key = file_key
+            k.delete()
+        except Exception as e:
+            raise e
+        finally:
+            k.close()

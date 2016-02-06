@@ -3,8 +3,9 @@ import ckan.plugins.toolkit as toolkit
 
 from pylons import config
 
-import ckanext.cloud_connector.action as action
 import ckanext.cloud_connector.create as create
+import ckanext.cloud_connector.update as update
+
 import ckanext.cloud_connector.uploader
 
 import ckan.model as model
@@ -20,7 +21,7 @@ class S3Plugin(plugins.SingletonPlugin):
     log.debug('Setting up actions')
     return {
       'resource_create': create.resource_create,
-      #'resource_update': action.resource_update,
+      'resource_update': update.resource_update,
       #'resource_delete': action.resource_delete,
     }
 
