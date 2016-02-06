@@ -5,6 +5,7 @@ from pylons import config
 
 import ckanext.cloud_connector.create as create
 import ckanext.cloud_connector.update as update
+import ckanext.cloud_connector.delete as delete
 
 import ckanext.cloud_connector.uploader
 
@@ -22,7 +23,7 @@ class S3Plugin(plugins.SingletonPlugin):
     return {
       'resource_create': create.resource_create,
       'resource_update': update.resource_update,
-      #'resource_delete': action.resource_delete,
+      'resource_delete': delete.resource_delete,
     }
 
   # IUploader

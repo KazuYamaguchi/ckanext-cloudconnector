@@ -209,17 +209,12 @@ class S3ResourceUploader(BaseS3Uploader):
             resource['url_type'] = ''
 
     def get_path(self, id, filename):
-        '''Return the key used for this resource in S3.
-
-        Keys are in the form:
-        <ckanext.s3filestore.aws_storage_path>/resources/<resource id>/<filename>
-
-        e.g.:
-        my_storage_path/resources/165900ba-3c60-43c5-9e9c-9f8acd0aa93f/data.csv
-        '''
         log.debug('get_path')
         directory = self.get_directory(id, self.storage_path)
+        if filename.startswith("https://s3.amazonaws.com/"):
+            filename = filename[filename.find(id):]
         filepath = os.path.join(directory, filename)
+        log.debug(filepath)
         return filepath
 
     def upload(self, id, max_size=10):
