@@ -55,10 +55,10 @@ def resource_create(context, data_dict):
     ## Get out resource_id resource from model as it will not appear in
     ## package_show until after commit
     remote_filepath = upload.upload(context['package'].resources[-1].id,   uploader.get_max_resource_size())
-    log.debug(remote_filepath)
-
-    pkg_dict['resources'][-1]['url_type'] = ''
-    pkg_dict['resources'][-1]['url'] = remote_filepath
+    if remote_filepath:
+        log.debug(remote_filepath)
+        pkg_dict['resources'][-1]['url_type'] = ''
+        pkg_dict['resources'][-1]['url'] = remote_filepath
     _get_action('package_update')(context, pkg_dict)
     model.repo.commit()
 
