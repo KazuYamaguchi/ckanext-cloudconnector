@@ -28,9 +28,11 @@ class BaseS3Uploader(object):
         self.bucket_name = config.get('ckanext.cloud_storage.s3.bucket')
         self.bucket = self.get_s3_bucket(self.bucket_name)
 
+
     def get_directory(self, id, storage_path):
         directory = os.path.join(storage_path, id)
         return directory
+
 
     def get_s3_bucket(self, bucket_name):
         '''Return a boto bucket, creating it if it doesn't exist.'''
@@ -45,22 +47,21 @@ class BaseS3Uploader(object):
             bucket = S3_conn.get_bucket(bucket_name)
         except boto.exception.S3ResponseError as e:
             if e.status == 404:
-                log.warning('Bucket {0} could not be found, ' +
-                            'attempting to create it...'.format(bucket_name))
+                log.warning('Bucket {0} could not be found, attempting to create it...'.format(bucket_name))
                 try:
                     bucket = S3_conn.create_bucket(bucket_name)
                 except (boto.exception.S3CreateError,
                         boto.exception.S3ResponseError) as e:
-                    raise S3FileStoreException(
-                        'Could not create bucket {0}: {1}'.format(bucket_name,
-                                                                  str(e)))
+                    raise S3FileStoreException('Could not create bucket {0}: {1}'.format(bucket_name, str(e)))
             elif e.status == 403:
-                raise S3FileStoreException(
-                    'Access to bucket {0} denied'.format(bucket_name))
+                log.error('Access to bucket {0} denied'.format(bucket_name))
+                log.error(e)
+                raise S3FileStoreException('Access to bucket {0} denied'.format(bucket_name))
             else:
+                log.error(e)
                 raise
-
         return bucket
+
 
     def upload_to_key(self, filepath, upload_file, make_public=True):
         '''Uploads the `upload_file` to `filepath` on `self.bucket`.'''
@@ -76,9 +77,11 @@ class BaseS3Uploader(object):
             if make_public:
                 k.make_public()
         except Exception as e:
+            log.error(e)
             raise e
         finally:
             k.close()
+
 
     def clear_key(self, filepath):
         '''Deletes the contents of the key at `filepath` on `self.bucket`.'''
@@ -87,6 +90,7 @@ class BaseS3Uploader(object):
             k.key = filepath
             k.delete()
         except Exception as e:
+            log.error(e)
             raise e
         finally:
             k.close()
@@ -252,6 +256,7 @@ class S3ResourceUploader(BaseS3Uploader):
             k.key = file_key
             k.delete()
         except Exception as e:
+            log.error(e)
             raise e
         finally:
             k.close()
