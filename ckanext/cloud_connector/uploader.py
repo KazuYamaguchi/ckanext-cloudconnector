@@ -212,7 +212,8 @@ class S3ResourceUploader(BaseS3Uploader):
     def get_path(self, id, filename):
         log.debug('get_path')
         directory = self.get_directory(id, self.storage_path)
-        if filename.startswith("https://s3.amazonaws.com/"):
+        bucket_endpoint = config.get('ckanext.cloud_storage.s3.endpoint')
+        if filename.startswith(bucket_endpoint):
             filename = filename[filename.find(id):]
         filepath = os.path.join(directory, filename)
         log.debug(filepath)
@@ -228,7 +229,8 @@ class S3ResourceUploader(BaseS3Uploader):
         if self.filename:
             filepath = self.get_path(id, self.filename)
             self.upload_to_key(filepath, self.upload_file)
-            remote_filepath = os.path.join('https://s3.amazonaws.com/',self.bucket_name, filepath)
+            bucket_endpoint = config.get('ckanext.cloud_storage.s3.endpoint')
+            remote_filepath = os.path.join(bucket_endpoint,self.bucket_name, filepath)
 
         # The resource form only sets self.clear (via the input clear_upload)
         # to True when an uploaded file is not replaced by another uploaded
