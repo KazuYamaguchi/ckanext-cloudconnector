@@ -130,7 +130,7 @@ class S3Uploader(BaseS3Uploader):
         return os.path.join(path, 'storage', 'uploads', upload_to)
 
     def update_data_dict(self, data_dict, url_field, file_field, clear_field):
-        #log.debug('update_data_dict')
+        log.debug('update_data_dict')
         '''Manipulate data from the data_dict. This needs to be called before it
         reaches any validators.
 
@@ -235,6 +235,7 @@ class S3ResourceUploader(BaseS3Uploader):
         self.id = id
         # If a filename has been provided (a file is being uploaded) write the
         # file to the appropriate key in the AWS bucket.
+        log.debug(self.filename)
         remote_filepath = None
         if self.filename:
             filepath = self.get_path(id, self.filename)
@@ -250,7 +251,7 @@ class S3ResourceUploader(BaseS3Uploader):
         if self.clear:
             filepath = self.get_path(id, self.old_filename)
             self.clear_key(filepath)
-        log.debug('remote_filepath: '+remote_filepath)
+        log.debug('remote_filepath: '+ str(remote_filepath))
         return  remote_filepath
 
     def delete(self, filepath):
