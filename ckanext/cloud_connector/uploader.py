@@ -30,18 +30,19 @@ class BaseS3Uploader(object):
 
 
     def get_directory(self, id, storage_path):
+        log.debug('get_directory')
         directory = os.path.join(storage_path, id)
         return directory
 
 
     def get_s3_bucket(self, bucket_name):
         '''Return a boto bucket, creating it if it doesn't exist.'''
+        log.debug('get_s3_bucket')
         p_key = config.get('ckanext.cloud_storage.s3.aws_key')
         s_key = config.get('ckanext.cloud_storage.s3.secret_key')
 
         # make s3 connection
         S3_conn = boto.connect_s3(p_key, s_key)
-
         # make sure bucket exists and that we can access
         try:
             bucket = S3_conn.get_bucket(bucket_name)
@@ -65,13 +66,14 @@ class BaseS3Uploader(object):
 
     def upload_to_key(self, filepath, upload_file, make_public=True):
         '''Uploads the `upload_file` to `filepath` on `self.bucket`.'''
-        upload_file.seek(0)
-        content_type, x = mimetypes.guess_type(filepath)
-        headers = {}
-        if content_type:
-            headers.update({'Content-Type': content_type})
+        log.debug('upload_to_key')
         k = boto.s3.key.Key(self.bucket)
         try:
+            upload_file.seek(0)
+            content_type, x = mimetypes.guess_type(filepath)
+            headers = {}
+            if content_type:
+                headers.update({'Content-Type': content_type})
             k.key = filepath
             k.set_contents_from_file(upload_file, headers=headers)
             if make_public:
@@ -85,6 +87,7 @@ class BaseS3Uploader(object):
 
     def clear_key(self, filepath):
         '''Deletes the contents of the key at `filepath` on `self.bucket`.'''
+        log.debug('clear_key')
         k = boto.s3.key.Key(self.bucket)
         try:
             k.key = filepath
@@ -170,7 +173,7 @@ class S3Uploader(BaseS3Uploader):
         validated and flushed to the db. This is so we do not store anything
         unless the request is actually good. max_size is size in MB maximum of
         the file'''
-        log.debug('upload')
+        log.debug('upload general file')
         # If a filename has been provided (a file is being uploaded) write the
         # file to the appropriate key in the AWS bucket.
         if self.filename:
@@ -213,6 +216,7 @@ class S3ResourceUploader(BaseS3Uploader):
             self.old_filename = old_resource.url
             resource['url_type'] = ''
 
+
     def get_path(self, id, filename):
         log.debug('get_path')
         directory = self.get_directory(id, self.storage_path)
@@ -224,8 +228,8 @@ class S3ResourceUploader(BaseS3Uploader):
         return filepath
 
     def upload(self, id, max_size=10):
-        log.debug('upload')
         '''Upload the file to S3.'''
+        log.debug('upload resource')
         self.id = id
         # If a filename has been provided (a file is being uploaded) write the
         # file to the appropriate key in the AWS bucket.
@@ -249,6 +253,7 @@ class S3ResourceUploader(BaseS3Uploader):
 
     def delete(self, filepath):
         '''Deletes the contents of the key at `filepath` on `self.bucket`.'''
+        log.debug('delete')
         k = boto.s3.key.Key(self.bucket)
         try:
             file_key = filepath[filepath.find(self.storage_path):]
