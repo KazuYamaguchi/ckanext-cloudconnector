@@ -78,7 +78,9 @@ class BaseS3Uploader(object):
             k.set_contents_from_file(upload_file, headers=headers)
             if make_public:
                 k.make_public()
+            log.debug('upload ok')
         except Exception as e:
+            log.debug('upload error')
             log.error(e)
             raise e
         finally:
@@ -248,7 +250,7 @@ class S3ResourceUploader(BaseS3Uploader):
         if self.clear:
             filepath = self.get_path(id, self.old_filename)
             self.clear_key(filepath)
-
+        log.debug('remote_filepath: '+remote_filepath)
         return  remote_filepath
 
     def delete(self, filepath):
