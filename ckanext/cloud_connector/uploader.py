@@ -156,7 +156,7 @@ class S3Uploader(BaseS3Uploader):
             self.filename = munge.munge_filename_legacy(self.filename)
             self.filepath = os.path.join(self.storage_path, self.filename)
             bucket_endpoint = config.get('ckanext.cloud_storage.s3.endpoint')
-            self.remote_filepath = os.path.join(bucket_endpoint,self.bucket_name, self.filepath)
+            self.remote_filepath = os.path.join(bucket_endpoint, self.filepath)
             #log.debug(self.remote_filepath)
             #log.debug(self.filename)
             data_dict[url_field] = self.remote_filepath
@@ -241,7 +241,7 @@ class S3ResourceUploader(BaseS3Uploader):
             filepath = self.get_path(id, self.filename)
             self.upload_to_key(filepath, self.upload_file)
             bucket_endpoint = config.get('ckanext.cloud_storage.s3.endpoint')
-            remote_filepath = os.path.join(bucket_endpoint,self.bucket_name, filepath)
+            remote_filepath = os.path.join(bucket_endpoint, filepath)
 
         # The resource form only sets self.clear (via the input clear_upload)
         # to True when an uploaded file is not replaced by another uploaded
